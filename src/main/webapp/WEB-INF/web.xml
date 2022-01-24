@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web_1:web-app>
+  
+  <welcome-list-file>
+  	<welcome-file>Login.jsp</welcome-file>
+  </welcome-list-file>
+  
+  <web_1:servlet>
+    <web_1:servlet-name>Ready</web_1:servlet-name>
+    <web_1:servlet-class>com.getready.servlets.Ready</web_1:servlet-class>
+  </web_1:servlet>
+ 
+  <web_1:servlet-mapping>
+    <web_1:servlet-name>Ready</web_1:servlet-name>
+    <web_1:url-pattern>/Menu</web_1:url-pattern>
+  </web_1:servlet-mapping>
+
+  
+  <web_1:servlet>
+    <web_1:description></web_1:description>
+    <web_1:display-name>AffichageAvancementPhase</web_1:display-name>
+    <web_1:servlet-name>AffichageAvancementPhase</web_1:servlet-name>
+    <web_1:servlet-class>com.getready.servlets.AffichageAvancementPhase</web_1:servlet-class>
+  </web_1:servlet>
+  
+  <web_1:servlet-mapping>
+    <web_1:servlet-name>AffichageAvancementPhase</web_1:servlet-name>
+    <web_1:url-pattern>/Run</web_1:url-pattern>
+  </web_1:servlet-mapping>
+  
+  
+    <web_1:servlet>
+   	 <web_1:servlet-name>Lock</web_1:servlet-name>
+   	 
+     <web_1:servlet-class>com.getready.servlets.Lock</web_1:servlet-class>
+     <load-on-startup>1</load-on-startup>
+    </web_1:servlet>
+  
+  <web_1:servlet-mapping>
+    <web_1:servlet-name>Lock</web_1:servlet-name>
+    <web_1:display-name>Lock</web_1:display-name>
+    <web_1:url-pattern>/Login</web_1:url-pattern>
+  </web_1:servlet-mapping>
+  
+  
+   <web_1:servlet>
+    <web_1:servlet-name>GestionServlet</web_1:servlet-name>
+    <web_1:servlet-class>com.getready.servlets.GestionServlet</web_1:servlet-class>
+  </web_1:servlet>
+  
+  <web_1:servlet-mapping>
+    <web_1:servlet-name>GestionServlet</web_1:servlet-name>
+    <web_1:url-pattern>/Gestion</web_1:url-pattern>
+  </web_1:servlet-mapping>
+  
+  
+  
+  <web_1:jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <include-prelude>/WEB-INF/taglibs.jsp</include-prelude>
+    </jsp-property-group>
+  </web_1:jsp-config>
+
+
+
+  <welcome-file-list>
+  	<welcome-file>Login.jsp</welcome-file>
+  </welcome-file-list>
+  
+</web_1:web-app >
