@@ -1,13 +1,10 @@
 package com.getready.timecalculator;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import com.getready.beans.Bean_Time;
-import com.getready.connexion.Connexion;
+import java.util.List;
+
+import com.getready.beans.Bean_Phase;
 
 
 
@@ -15,7 +12,7 @@ public class TimeCalculator implements Runnable {
 	
 	//initialisation des variables
 	public final int startTimeActivite = (LocalTime.now().toSecondOfDay());
-	public int indice;
+	private int indice;
 	public ArrayList<String> messageLecteur = new ArrayList<String>();
 	private int avancementPhase ; 
 	public String nomPhaseEnCours ;
@@ -23,157 +20,117 @@ public class TimeCalculator implements Runnable {
 	private boolean running ;
 	public int heureDepart ;
 	public String nomTableEnCours;
-	
+	Thread threadPhase = new Thread(this);
+	private List<Bean_Phase> listPhasesUser;
 	
 	
 	@Override
 	public void run() {
+	
+	avancementPhase = 0;	
 		
 	while(running) {
 		
+		System.out.println("DANS LE THREAD-----"+listPhasesUser.size());
+		while(indice < listPhasesUser.size()) {
+			
+			
+			Bean_Phase beanPhase = listPhasesUser.get(indice);
+			
+			
+			nomPhaseEnCours = beanPhase.getLeNom().toUpperCase();
 		
-		String nomphase = null; 
-		
-		Connection con = Connexion.loadDatabase();
-		//loadDatabase();
-		
-		//on parcours la base de donn�es et on stocke les entr�es dans la variable resultat
-		try {
-			
-			Statement statement = null;
-			ResultSet resultat = null;	
-			statement = con.createStatement();
-			
-			
-			if(indice == 0) {
-				indice = 1;
-			}
-			
-			String commandSQL = "SELECT nomPhase, dureephase FROM `"+nomTableEnCours+"` WHERE indice = '"+indice+"' ;";
-			System.out.println("----------------------DEBUT THREAD-----------------------"+"/n"+"NOM TABLE EN COURS=   "+nomTableEnCours);
-			
-			//Lecture d'une entr�e index�e de la BD par appel de la m�thode
-			resultat = statement.executeQuery(commandSQL);
-			
-			if(resultat.next() == true){	
-				
-				nomphase = resultat.getString("nomPhase");
-				int duree = resultat.getInt("dureephase");
-				
-				
-				//enregistrement des valeurs des variables/issues de la BD dans les propri�t�s du bean
-				Bean_Time phaseRun = new Bean_Time();
-					
-				phaseRun.setNomPhase(nomphase);
-				phaseRun.setIndice(indice);
-				phaseRun.setDuree(duree);
-				
-				nomPhaseEnCours = nomphase.toUpperCase();
-				
-				float stopTimePrevuPhase = (phaseRun.getDuree()*60) ; 
-				float currentTime= 0;
-				float startPhase = LocalTime.now().toSecondOfDay() ;
-				float avancement = 0;
-				avancementPhase = 0;
-				
-				
-				do {		
-					if(running) {
-						
-						currentTime =	(LocalTime.now().toSecondOfDay()) - startPhase;
-					
-						avancement = (currentTime*100)/stopTimePrevuPhase ;
-					
-						avancementPhase = (int)avancement;
-						getAvancementPhase();
-						
-//						System.out.println("--------------AVANCEMENT "+ nomPhaseEnCours + ":       "+ getAvancementPhase());
-						
-					}else {
 
-						avancementPhase = 0;
-						Thread.currentThread().interrupt();
-						return;
-					}
-					
-					
-				}while(avancement <= 100);
-				
-
-				avancementPhase = 0;
-				
-				indice = indice + 1;
-				
+			float stopTimePrevuPhase = (beanPhase.getDureephase()*60) ; 
+			float currentTime= 0;
+			float startPhase = LocalTime.now().toSecondOfDay() ;
+			float avancement = 0;
+			
+			
+			do {		
 				if(running) {
 					
-					
-					run();		
-					}
-				else {
-					Thread.currentThread().interrupt();
-					avancementPhase = 0;
-					
-				}
+					currentTime =	(LocalTime.now().toSecondOfDay()) - startPhase;
 				
+					avancement = (currentTime*100)/stopTimePrevuPhase ;
+				
+					avancementPhase = (int)avancement;
+									
+					
 				}else {
-					
+			
+					threadPhase.interrupt();
 					avancementPhase = 0;
-					
-					stopPhaseThread(indice, nomPhaseEnCours);
 					
 					return;
 					}
-					
-			}catch(SQLException e) {
-				e.printStackTrace();
-			}
-		}if(Thread.currentThread().isInterrupted()) {
-
-			return;
-		}
-	}
-		
-	public void startPhaseThread(String nomTable) {
-		
-		synchronized(nomTable) {
+				
+				
+			}while(avancement <= 100);
 			
-		Thread threadPhase = new Thread(this);
-		nomTableEnCours = nomTable;
-		running = true;		
-		
-		threadPhase.start();
-		
-		System.out.println("START METHOD - THREAD PHASE:  INDICE:    "+indice+"     STATUT:    "+threadPhase.getState()+"      RUNNING:   "+running+"      NOM-TABLE-EN-COURS:    "+nomTableEnCours+"----NOM TABLE:----"+nomTable);
+			indice ++;
+			System.out.println("----PHASE-----"+nomPhaseEnCours+"-----TERMINE------");
+			
 		}
+		
+	}
+}
+	
+
+	public synchronized void setListPhasesUser(List<Bean_Phase> listPhasesUser) {
+		
+		this.listPhasesUser = listPhasesUser;
+		
+	}
+	
+	public synchronized void setIndice(int nouvelIndice) {
+		
+		this.indice = nouvelIndice;
+	}
+	
+
+	
+	
+	public synchronized void startPhaseThread(int indiceStart) {
+		
+//		setListPhasesUser(listPhasesUser);
+		setIndice(indiceStart);
+		running = true;	
+		threadPhase.start();
+		System.out.println("START METHOD - THREAD: "+threadPhase.getName()+"   INDICE:    "+indice+"     STATUT:    "+threadPhase.getState()+"      STATUT_RUNNING:   "+running+"      PHASE-EN-COURS:    "+nomPhaseEnCours);
+//		Thread.currentThread().start();
+	
+		
 	}
 	
 	
-	public void stopPhaseThread(int rang, String nomTable) {
-		
-		synchronized(nomTable) {
-		nomTableEnCours = nomTable;
+	public synchronized void stopPhaseThread() {
+				
 		running = false ;
-		indice = indice + rang ;
+		threadPhase.interrupt();
 		avancementPhase = 0;	
 
-		System.out.println("STOP METHOD - THREAD PHASE:   INDICE:  "+indice+"    RUNNING:   "+running+"      NOM-TABLE-EN-COURS:    "+nomTable+"----NOM TABLE:----"+nomTable);
-		}
+		System.out.println("STOP METHOD - THREAD PHASE:  INDICE:    "+indice+"     STATUT:    "+threadPhase.getState()+"      STATUT_RUNNING:   "+running+"      PHASE-EN-COURS:    "+nomPhaseEnCours);
+		
 	}
 
-	public void phaseChange(String nomTable) {
+	public synchronized void phaseChange(int indiceIncremente) {
 			
-			running = true;			
 			avancementPhase = 0;
+			indice = indice + indiceIncremente;
+			System.out.println("CHANGE METHOD 1- THREAD: "+threadPhase.getName()+"   INDICE:    "+indice+"     STATUT:    "+threadPhase.getState()+"      STATUT_RUNNING:   "+running+"      PHASE-EN-COURS:    "+nomPhaseEnCours);
+			startPhaseThread(indice);
 			
-			
-			startPhaseThread(nomTable);
-		
 	}
 	
 
 	public synchronized int getAvancementPhase() {
-		
-		
+			
 		return avancementPhase;
 	}
+
+	public synchronized String getNomPhaseEnCours() {
+		return nomPhaseEnCours;
+	}
+
 }

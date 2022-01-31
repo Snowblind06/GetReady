@@ -10,7 +10,7 @@
 
 <head>
 	<link type="text/css" rel="stylesheet" href="/GetReady/style.css"/>
-
+	<script src="https://kit.fontawesome.com/a6195d6ddf.js" crossorigin="anonymous"></script>
 	<meta charset="utf-8" HTTP-EQUIV="Refresh" CONTENT="2">
 	<title>GetReady ${nomphase}</title>	
 </head>
@@ -24,7 +24,7 @@
 <div id="page-wrap">
 
 	<div class="horizon">
-		
+
  		<h1>${nomphase}</h1>
 
   		<pre>${avancement}%</pre>
@@ -62,6 +62,7 @@
 </div>
 
 <a href="http://localhost:8080/GetReady/Menu"><button class="bn28">Menu</button></a>
+<p></p>
 
 
 </body>

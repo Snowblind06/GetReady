@@ -1,14 +1,15 @@
 package com.getready.servlets;
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.getready.activite.Activite;
 import com.getready.beans.Bean_Phase;
+import com.getready.timecalculator.TimeCalculator;
 import com.getready.userManagement.userManagement;
 import com.getready.userbean.userbean;
-
-import java.time.LocalTime;
-import java.util.ArrayList;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,12 +23,7 @@ import jakarta.servlet.http.HttpSession;
  */
 @WebServlet({"/Menu"})
 public class Ready extends HttpServlet {
-	
-	Bean_Phase bean = new Bean_Phase();
-	
-	userManagement userAuth = new userManagement();
-	
-	userbean user = new userbean();
+
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -37,7 +33,7 @@ public class Ready extends HttpServlet {
      * Default constructor. 
      */
     public Ready() {
-        // TODO Auto-generated constructor stub
+        
     	
     }
     
@@ -47,6 +43,12 @@ public class Ready extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		userManagement userAuth = new userManagement();
+		userbean user = new userbean();
+		
+		////////////////////////////////////////
+//		gestionThread gestionThread = new gestionThread();
+		TimeCalculator timeCalculator = new TimeCalculator();
 		
 		Activite tableauActivite = new Activite();
 		//RECUPERATION DE L'ID USER DEPUIS LA SESSION----------------------------
@@ -60,19 +62,19 @@ public class Ready extends HttpServlet {
 		user = userAuth.afficherUserBean(id);
 		System.out.println("BEAN USER:     "+ user.getNomTableUser());
 		
+		List<Bean_Phase> listPhases = tableauActivite.recupererPhase(user);
 		
 		//AVEC L'ID ON AFFICHE LE NOM D'ACTIVITE POUR AFFICHAGE -------------------
 		String activiteName = user.getActivite();
 		
-		//ON CHARGE LA REQUETE AVEC LE BEAN ISSU DE ACTIVITE.JAVA, LECTURE PUIS AFFICHAGE DE LA DB
-		request.setAttribute("activite", tableauActivite.recupererPhase(user));	
+		//ON CHARGE LA REQUETE AVEC LE BEAN ISSU DE ACTIVITE.JAVA, LECTURE PUIS AFFICHAGE DE LA DB			
 		request.setAttribute("activiteName", activiteName);
-		
+		request.setAttribute("beanUser", user);
 		
 		//ON CHARGE LE BEAN USER PROVENANT DE LA DB DANS LA SESSION POUR LA SUITE --------------------------------------
 		session.setAttribute("beanUser", user);
-		session.setAttribute("activite", tableauActivite.recupererPhase(user));
-		
+		session.setAttribute("activite", listPhases);
+		session.setAttribute("timeCalculator", timeCalculator);
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/Menu.jsp").forward(request, response);
 		}
@@ -95,6 +97,7 @@ public class Ready extends HttpServlet {
 	
 		String activiteName = (String) session.getAttribute("activiteUser");
 		
+		userbean user = (userbean) session.getAttribute("beanUser");
 		
 		request.setAttribute("activite", tableauActivite.recupererPhase(user));
 
@@ -180,6 +183,20 @@ public class Ready extends HttpServlet {
 			
 			response.sendRedirect("/GetReady/Gestion");
 		}
+		
+	//LANCER LE RUNNER DE PHASES
+//		if(request.getParameter("Validation") != null) {
+//			
+//			
+//			//ON CHARGE LA REQUETE AVEC LE BEAN ISSU DE ACTIVITE.JAVA, LECTURE PUIS AFFICHAGE DE LA DB
+//			request.setAttribute("activite", tableauActivite.recupererPhase(user));	
+//			request.setAttribute("activiteName", activiteName);
+//			request.setAttribute("beanUser", user);
+//			
+//			//ON CHARGE LE BEAN USER PROVENANT DE LA DB DANS LA SESSION POUR LA SUITE --------------------------------------
+//			session.setAttribute("beanUser", user);
+//			response.sendRedirect("/GetReady/Run");
+//		}
 		
 		
         

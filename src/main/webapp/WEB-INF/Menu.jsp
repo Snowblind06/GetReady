@@ -100,13 +100,6 @@
 	</div>
 	
 	<a href="http://localhost:8080/GetReady/Run"><button class="bn29">GO!</button></a>
-	<!-- <form method="post" action="http://localhost:8080/GetReady/Run" id="boutonValidationActivite">		
-		<fieldset>
-			<legend>Tout est prêt?</legend><br>
-			<label for="Validation"></label>
-			<input type="submit" name="Validation" id="Validation" value="OUI C'EST PARTI!!"/>		
-		</fieldset>
-	</form> -->
 
 <p></p>
 

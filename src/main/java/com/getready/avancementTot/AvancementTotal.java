@@ -113,5 +113,12 @@ public void stopAvanceTotThread() {
 	
 	System.out.println("STOP THREAD AVANCEMENT TOTAL:-------  RUNNING:   "+running+"        NOM TABLE USER:     "+tableUser);
 	}
+
+
+
+public int getAvancementTotal() {
+	
+	return avancementTotal;
+}
 	
 }

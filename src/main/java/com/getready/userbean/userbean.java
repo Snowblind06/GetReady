@@ -10,15 +10,26 @@ public class userbean {
 	private String activite ;
 	private LocalTime creation;
 	private String nomTableUser;
-	
+	private int avancementPhaseBean;
+	private int avancementTotalBean;
+	private String phaseEnCoursBean;
 	
 	
 	public userbean() {
-		
-		
+	
 	}
 	
 	
+	public int getAvancementPhaseBean() {
+		return avancementPhaseBean;
+	}
+
+
+	public void setAvancementPhaseBean(int avancementPhase) {
+		this.avancementPhaseBean = avancementPhase;
+	}
+
+
 	public String getId() {
 		return id;
 	}
@@ -69,6 +80,26 @@ public class userbean {
 
 	public void setNomTableUser(String nomTableUser) {
 		this.nomTableUser = nomTableUser;
+	}
+
+
+	public int getAvancementTotalBean() {
+		return avancementTotalBean;
+	}
+
+
+	public void setAvancementTotalBean(int avancementTotal) {
+		this.avancementTotalBean = avancementTotal;
+	}
+
+
+	public String getPhaseEnCoursBean() {
+		return phaseEnCoursBean;
+	}
+
+
+	public void setPhaseEnCoursBean(String phaseEnCours) {
+		this.phaseEnCoursBean = phaseEnCours;
 	}
 	 
 	 

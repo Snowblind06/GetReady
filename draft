@@ -21,6 +21,16 @@ import jakarta.servlet.http.HttpSession;
 public class AffichageAvancementPhase extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+
+	//instance du TimeCalculator
+	TimeCalculator timeCalculator = new TimeCalculator();
+
+	//AVANCEMENT TOTAL
+	AvancementTotal avanceTot = new AvancementTotal();
+	
+	
+	
+	
     /**
      * Default constructor. 
      */
@@ -35,9 +45,14 @@ public class AffichageAvancementPhase extends HttpServlet {
 		HttpSession session = request.getSession();
 		String activiteUser = (String) session.getAttribute("activiteUser");
 		request.setAttribute("activiteUser", activiteUser);
-		
+	
+		request.setAttribute("nomphase", timeCalculator.nomPhaseEnCours);
+		request.setAttribute("avancement", timeCalculator.getAvancementPhase());
+		request.setAttribute("avancementTotal", avanceTot.avancementTotal);
 
-		doPost(request, response);
+		
+		this.getServletContext().getRequestDispatcher("/WEB-INF/Run.jsp").forward(request, response);
+		
 		
 	}
 	
@@ -51,26 +66,17 @@ public class AffichageAvancementPhase extends HttpServlet {
 		HttpSession session = request.getSession();
 		userbean user = (userbean) session.getAttribute("beanUser");
 		
-		synchronized(user) {
+		
 		String nomTable = user.getNomTableUser();
 		
 	
 		
-		//instance du TimeCalculator
-		TimeCalculator timeCalculator = new TimeCalculator();
-
-		//AVANCEMENT TOTAL
-		AvancementTotal avanceTot = new AvancementTotal();
-
-		
-
 				
 		//DEPART ACTIVITE--------------------------------------------------------------------------------------------------------------
 
 		if(request.getParameter("go") != null) {
 
-			
-
+		
 			timeCalculator.indice = 0;
 			timeCalculator.startPhaseThread(nomTable);
 			
@@ -81,7 +87,9 @@ public class AffichageAvancementPhase extends HttpServlet {
 			avanceTot.startAvanceTotThread(nomTable);
 			
 			
-			request.setAttribute("messageServlet", messageServlet);	
+			request.setAttribute("messageServlet", messageServlet);
+
+			
 		 
 		}
 		
@@ -102,6 +110,7 @@ public class AffichageAvancementPhase extends HttpServlet {
 			//chargement de la requ�te------------------------------------------------------------------------------------------------------
 			request.setAttribute("messageServlet", messageServlet);	
 			request.setAttribute("nomphase", timeCalculator.nomPhaseEnCours);
+			
 		}
 		
 		
@@ -118,6 +127,7 @@ public class AffichageAvancementPhase extends HttpServlet {
 			
 			request.setAttribute("messageServlet", messageServlet);
 			request.setAttribute("nomphase", timeCalculator.nomPhaseEnCours);
+			
 			}
 		
 		
@@ -133,18 +143,19 @@ public class AffichageAvancementPhase extends HttpServlet {
 			
 			request.setAttribute("messageServlet", messageServlet);
 			request.setAttribute("nomphase", timeCalculator.nomPhaseEnCours);
+			
 			}
 		
 
 		
-		
 		request.setAttribute("nomphase", timeCalculator.nomPhaseEnCours);
-		request.setAttribute("avancement", timeCalculator.avancementPhase);
+		request.setAttribute("avancement", timeCalculator.getAvancementPhase());
 		request.setAttribute("avancementTotal", avanceTot.avancementTotal);
 		
-		}
-		this.getServletContext().getRequestDispatcher("/WEB-INF/Run.jsp").forward(request, response);
+//		System.out.println("------DOPOST METHOD----------AVANCEMENT PHASE=---------"+timeCalculator.getAvancementPhase());
 		
+		this.getServletContext().getRequestDispatcher("/WEB-INF/Run.jsp").forward(request, response);
+	
 		
 	}
 
