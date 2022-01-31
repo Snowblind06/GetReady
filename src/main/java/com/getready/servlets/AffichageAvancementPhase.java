@@ -48,6 +48,7 @@ public class AffichageAvancementPhase extends HttpServlet {
 		user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
 //		user.setAvancementTotalBean(timeCalculator.getAvanceTotal());
 		user.setPhaseEnCoursBean(timeCalculator.getNomPhaseEnCours());
+		user.setIndiceEnCours(timeCalculator.getIndice());
 		
 		//ON RENVOIE LE USERBEAN ET LE CONTROLEUR DE THREADS DANS LA SESSION APRES MISE A JOUR SI BESOIN DANS LE DOPOST PLUS TARD----------
 		session.setAttribute("timeCalculator", timeCalculator);
@@ -169,9 +170,9 @@ public class AffichageAvancementPhase extends HttpServlet {
 			//IMPORTATION DU TIMECALCULATOR DEPUIS LA SESSION ET INSTANCIATION------------------------------------------------------------------
 			TimeCalculator timeCalculator = new TimeCalculator();
 			
-			//LANCEMENT DU THREAD----------------------------------------------------------------------------------------------------------
+			//LANCEMENT DU THREAD ET ENVOI DE LA LISTE DE BEAN DE PHASES AU TIMECALCULATOR----------------------------------------------------------------------------------------------------------
 			timeCalculator.setListPhasesUser(listPhasesUserBean);
-			timeCalculator.phaseChange(+1);
+			timeCalculator.phaseChange(user.getIndiceEnCours()+1);
 			
 			
 			//CHARGEMENT DU BEAN AVEC LES INFOS SUR LE TRAITEMENT FAIT PAR LE THREAD---------------------------------------------------------------
@@ -213,7 +214,7 @@ public class AffichageAvancementPhase extends HttpServlet {
 			
 			//LANCEMENT DU THREAD----------------------------------------------------------------------------------------------------------
 			timeCalculator.setListPhasesUser(listPhasesUserBean);
-			timeCalculator.phaseChange(-1);
+			timeCalculator.phaseChange(user.getIndiceEnCours()-1);
 			
 			
 			//CHARGEMENT DU BEAN AVEC LES INFOS SUR LE TRAITEMENT FAIT PAR LE THREAD---------------------------------------------------------------

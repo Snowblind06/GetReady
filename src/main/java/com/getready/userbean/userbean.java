@@ -13,12 +13,20 @@ public class userbean {
 	private int avancementPhaseBean;
 	private int avancementTotalBean;
 	private String phaseEnCoursBean;
-	
+	private int indiceEnCours;
 	
 	public userbean() {
 	
 	}
 	
+	public void setIndiceEnCours(int indice) {
+		
+		this.indiceEnCours = indice;
+	}
+	
+	public int getIndiceEnCours() {
+		return indiceEnCours;
+	}
 	
 	public int getAvancementPhaseBean() {
 		return avancementPhaseBean;

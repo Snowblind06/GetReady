@@ -88,8 +88,9 @@ public class TimeCalculator implements Runnable {
 		this.indice = nouvelIndice;
 	}
 	
-
-	
+	public synchronized int getIndice() {
+		return indice;
+	}
 	
 	public synchronized void startPhaseThread(int indiceStart) {
 		
