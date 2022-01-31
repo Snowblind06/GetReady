@@ -27,7 +27,7 @@ public class Connexion {
 			
 	    //on cr��e la connexion avec les identifiants/mdp
 		try {
-			connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/getready", "getready", "Aqwel83alex87!");
+			connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/getready", "getready", "Taratata1234!");
 		}catch (SQLException e) {
 			e.printStackTrace();
 			}
