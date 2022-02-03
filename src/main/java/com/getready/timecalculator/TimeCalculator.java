@@ -61,7 +61,7 @@ public class TimeCalculator implements Runnable {
 			
 					threadPhase.interrupt();
 					avancementPhase = 0;
-					
+					running = false;
 					return;
 					}
 				

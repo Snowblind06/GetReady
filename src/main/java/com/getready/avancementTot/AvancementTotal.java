@@ -1,29 +1,28 @@
 package com.getready.avancementTot;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalTime;
-import com.getready.connexion.Connexion;
+import java.util.List;
+
+import com.getready.beans.Bean_Phase;
 
 public class AvancementTotal implements Runnable {
 
 	
 	//initialisation des variables
-	public final int startTimeActivite = (LocalTime.now().toSecondOfDay());
+	private final int startTimeActivite = (LocalTime.now().toSecondOfDay());
 	public int indice;
 	public float stopTimeLecteur ;
-	public boolean running ;
+	private boolean running ;
 	public int avancementTotal;
-	public int heureLimite ;
-	public static String tableUser;
-	
+	private int heureFin;
+	private int heureLimite ;
+	public String tableUser;
+	private List<Bean_Phase> listPhasesUser ; 
 	
 @Override
 public void run() {
 	
-	heureLimite(tableUser);
+	heureLimite();
 	
 	while(running) {
 	
@@ -59,44 +58,27 @@ public void run() {
 	
 	
 //CALCUL DUREE TOTALE ACTIVITE
-private int heureLimite(String nomTable) {
-		
-		tableUser = nomTable;
-		Connection con = Connexion.loadDatabase();
-		
-		//ON PREND L'HEURE DE FIN DE LA DERNIERE ETAPE = HEURE DE FIN
-		try {
+private int heureLimite() {
+	
 			
-			int heureDepart ;
-			Statement statement = null;
-			ResultSet resultat = null;
-			
-			String commandSQL = "SELECT * FROM `"+tableUser+"`;" ;
-			
-			
-			statement = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			resultat = statement.executeQuery(commandSQL);
-			
-			resultat.next();
-			resultat.last();
-			
-			String finDePhase = resultat.getString("finphase");
-			
-			heureDepart = LocalTime.parse(finDePhase).toSecondOfDay();					
-			
-			heureLimite = heureDepart - startTimeActivite;
-			
-		} catch (SQLException e) {
-
-			e.printStackTrace();
+			Bean_Phase dernierBean;
+	
+			if(listPhasesUser != null && !listPhasesUser.isEmpty()) {
+				
+				dernierBean = listPhasesUser.get(listPhasesUser.size()-1);
+				heureFin = dernierBean.getFin().toSecondOfDay();
 			}
-		
+						
+			
+			heureLimite = heureFin - startTimeActivite;
+			
+
 		return heureLimite;	
 	}
 
-public void startAvanceTotThread(String nomTable) {
+public void startAvanceTotThread(List<Bean_Phase>listPhasesUserBean) {
 	
-	tableUser = nomTable;
+	this.listPhasesUser = listPhasesUserBean;
 	running = true;
 	
 	Thread avanceThread = new Thread(this);

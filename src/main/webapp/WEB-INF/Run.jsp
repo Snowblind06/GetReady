@@ -61,7 +61,7 @@
 	</div>
 </div>
 
-<a href="http://localhost:8080/GetReady/Menu"><button class="bn28">Menu</button></a>
+<a href="http://www.alexandre-piquelin.fr/GetReady/Menu"><button class="bn28">Menu</button></a>
 <p></p>
 
 

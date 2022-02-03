@@ -99,7 +99,7 @@
 		<c:out value="${messageSaisie }"/>
 	</div>
 	
-	<a href="http://localhost:8080/GetReady/Run"><button class="bn29">GO!</button></a>
+	<a href="http://www.alexandre-piquelin.fr/GetReady/Run"><button class="bn29">GO!</button></a>
 
 <p></p>
 

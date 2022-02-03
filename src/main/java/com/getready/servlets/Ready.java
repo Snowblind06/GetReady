@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.getready.activite.Activite;
+import com.getready.avancementTot.AvancementTotal;
 import com.getready.beans.Bean_Phase;
 import com.getready.timecalculator.TimeCalculator;
 import com.getready.userManagement.userManagement;
@@ -49,6 +50,7 @@ public class Ready extends HttpServlet {
 		////////////////////////////////////////
 //		gestionThread gestionThread = new gestionThread();
 		TimeCalculator timeCalculator = new TimeCalculator();
+		AvancementTotal avanceTot = new AvancementTotal();
 		
 		Activite tableauActivite = new Activite();
 		//RECUPERATION DE L'ID USER DEPUIS LA SESSION----------------------------
@@ -75,7 +77,7 @@ public class Ready extends HttpServlet {
 		session.setAttribute("beanUser", user);
 		session.setAttribute("activite", listPhases);
 		session.setAttribute("timeCalculator", timeCalculator);
-		
+		session.setAttribute("avancementTotal", avanceTot);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/Menu.jsp").forward(request, response);
 		}
 
@@ -183,21 +185,7 @@ public class Ready extends HttpServlet {
 			
 			response.sendRedirect("/GetReady/Gestion");
 		}
-		
-	//LANCER LE RUNNER DE PHASES
-//		if(request.getParameter("Validation") != null) {
-//			
-//			
-//			//ON CHARGE LA REQUETE AVEC LE BEAN ISSU DE ACTIVITE.JAVA, LECTURE PUIS AFFICHAGE DE LA DB
-//			request.setAttribute("activite", tableauActivite.recupererPhase(user));	
-//			request.setAttribute("activiteName", activiteName);
-//			request.setAttribute("beanUser", user);
-//			
-//			//ON CHARGE LE BEAN USER PROVENANT DE LA DB DANS LA SESSION POUR LA SUITE --------------------------------------
-//			session.setAttribute("beanUser", user);
-//			response.sendRedirect("/GetReady/Run");
-//		}
-		
+
 		
         
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.getready.activite.Activite;
+import com.getready.avancementTot.AvancementTotal;
 import com.getready.beans.Bean_Phase;
 import com.getready.timecalculator.TimeCalculator;
 import com.getready.userbean.userbean;
@@ -43,23 +44,25 @@ public class AffichageAvancementPhase extends HttpServlet {
 		//ON INSTANCIE UN USERBEAN ET LE CONTROLEUR DE THREADS EN LES CHARGEANT DEPUIS LA SESSION-----------------------------------------
 		userbean user = (userbean) session.getAttribute("beanUser");
 		TimeCalculator timeCalculator = (TimeCalculator) session.getAttribute("timeCalculator");
+		AvancementTotal avanceTot = (AvancementTotal) session.getAttribute("avancementTotal");
 		
-		//ON CHARGE LE USERBEAN AVEC LES GETTERS DU CONTROLEUR DE THREADS------------------------------------------------------------------
+		//ON CHARGE LE USERBEAN AVEC LES GETTERS DES CONTROLEURS DE THREADS------------------------------------------------------------------
 		user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
 //		user.setAvancementTotalBean(timeCalculator.getAvanceTotal());
 		user.setPhaseEnCoursBean(timeCalculator.getNomPhaseEnCours());
 		user.setIndiceEnCours(timeCalculator.getIndice());
+		user.setAvancementTotalBean(avanceTot.getAvancementTotal());
 		
-		//ON RENVOIE LE USERBEAN ET LE CONTROLEUR DE THREADS DANS LA SESSION APRES MISE A JOUR SI BESOIN DANS LE DOPOST PLUS TARD----------
+		//ON RENVOIE LE USERBEAN ET LES CONTROLEURS DE THREADS DANS LA SESSION APRES MISE A JOUR SI BESOIN DANS LE DOPOST PLUS TARD----------
 		session.setAttribute("timeCalculator", timeCalculator);
 		session.setAttribute("beanUser", user);
-		
+		session.setAttribute("avancementTotal", avanceTot);
 		
 		//ON CHARGE LA REQUETE AVEC LES INFOS DU USERBEAN NECESSAIRES A L'AFFICHAGE--------------------------------------------------------
 		request.setAttribute("nomphase", user.getPhaseEnCoursBean());
     	request.setAttribute("avancementTotal", user.getAvancementTotalBean());
     	request.setAttribute("avancement", user.getAvancementPhaseBean());
-		
+		request.setAttribute("avancementTotal", user.getAvancementTotalBean());
     	System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());
     	
 		this.getServletContext().getRequestDispatcher("/WEB-INF/Run.jsp").forward(request, response);
@@ -90,11 +93,14 @@ public class AffichageAvancementPhase extends HttpServlet {
 		//DEPART ACTIVITE-----------------------------------------------------------------------------------------------------------------
 		if(request.getParameter("go") != null) {
 			
+			//INSTANCE DES THREADS D'AVANCEMENT--------------------------------------------------------------------------------------------
+			AvancementTotal avanceTot = new AvancementTotal();
 			TimeCalculator timeCalculator = new TimeCalculator();
 			//LANCEMENT DU THREAD----------------------------------------------------------------------------------------------------------
-			timeCalculator.setListPhasesUser(listPhasesUserBean);
-			
+			timeCalculator.setListPhasesUser(listPhasesUserBean);			
 			timeCalculator.startPhaseThread(0);
+			
+			avanceTot.startAvanceTotThread(listPhasesUserBean);
 			
 			
 			//CHARGEMENT DU BEAN AVEC LES INFOS SUR LE TRAITEMENT FAIT PAR LE THREAD--------------------------------------------------------
@@ -109,11 +115,12 @@ public class AffichageAvancementPhase extends HttpServlet {
 			
 			//ON CHARGE LES VALEURS ISSUES DU TRAITEMENT DU THREAD DANS LE USERBEAN RECUPERE------------------------------------------------
 			user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
-			user.setAvancementTotalBean(timeCalculator.getAvancementPhase());
+			user.setAvancementTotalBean(avanceTot.getAvancementTotal());
 			
 			//ON CHARGE LA SESSION AVEC LE BEAN MIS A JOUR ET LE  TIMECALCULATOR----------------------------------------------------------------------------------
 			session.setAttribute("beanUser", user);
 			session.setAttribute("timeCalculator", timeCalculator);
+			session.setAttribute("avancementTotal", avanceTot);
 			
 			//NOTIFICATION UTILISATEUR SUR LE DEBUT DE L'ACTIVITE---------------------------------------------------------------------------
 			String messageServlet = "l'activité a commencé!";
@@ -125,10 +132,11 @@ public class AffichageAvancementPhase extends HttpServlet {
 		//ARRET LECTEUR----------------------------------------------------------------------------------------------------------------------
 		if(request.getParameter("stop") != null) {
 			
+			AvancementTotal avanceTot = (AvancementTotal) session.getAttribute("avancementTotal");
 			TimeCalculator timeCalculator = (TimeCalculator) session.getAttribute("timeCalculator");
 			//arrêtdes threads---------------------------------------------------------------------------------------------------------------
 			timeCalculator.stopPhaseThread();
-//			timeCalculator.stopTotThread();
+			avanceTot.stopAvanceTotThread();
 			
 			
 			//CHARGEMENT DU BEAN AVEC LES INFOS SUR LE TRAITEMENT FAIT PAR LE THREAD---------------------------------------------------------------
@@ -141,10 +149,11 @@ public class AffichageAvancementPhase extends HttpServlet {
 			
 			user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
 			user.setAvancementTotalBean(timeCalculator.getAvancementPhase());
-			
+			user.setAvancementTotalBean(avanceTot.getAvancementTotal());
 			//ON CHARGE LA SESSION AVEC LE BEAN MIS A JOUR--------------------------------------------------------------------------------------------
 			session.setAttribute("beanUser", user);
 			session.setAttribute("timeCalculator", timeCalculator);
+			session.setAttribute("avancementTotal", avanceTot);
 			System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());
 			
 			
@@ -184,7 +193,6 @@ public class AffichageAvancementPhase extends HttpServlet {
 			}
 			
 			user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
-			user.setAvancementTotalBean(timeCalculator.getAvancementPhase());
 			
 			System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());
 			//ON CHARGE LA SESSION AVEC LE BEAN MIS A JOUR ET LE TIMECALCULATOR--------------------------------------------------------------------------------------------
@@ -226,12 +234,10 @@ public class AffichageAvancementPhase extends HttpServlet {
 			}
 			
 			user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
-			user.setAvancementTotalBean(timeCalculator.getAvancementPhase());
 			
 			//ON CHARGE LA SESSION AVEC LE BEAN MIS A JOUR--------------------------------------------------------------------------------------------
 			session.setAttribute("beanUser", user);
 			user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
-			user.setAvancementTotalBean(timeCalculator.getAvancementPhase());
 			user.setPhaseEnCoursBean(timeCalculator.getNomPhaseEnCours());
 			
 			System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());
@@ -247,16 +253,17 @@ public class AffichageAvancementPhase extends HttpServlet {
 		
 		//IMPORTATION DU TIMECALCULATOR DEPUIS LA SESSION ET INSTANCIATION------------------------------------------------------------------
 		TimeCalculator timeCalculator = (TimeCalculator) session.getAttribute("timeCalculator");
+		AvancementTotal avanceTot = (AvancementTotal) session.getAttribute("avancementTotal");
 		
 		user.setAvancementPhaseBean(timeCalculator.getAvancementPhase());
-//		user.setAvancementTotalBean(timeCalculator.getAvanceTotal());
+		user.setAvancementTotalBean(avanceTot.getAvancementTotal());
 		user.setPhaseEnCoursBean(timeCalculator.getNomPhaseEnCours());
 		
 		System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());
 		
 		session.setAttribute("beanUser", user);
 		session.setAttribute("timeCalculator", timeCalculator);
-		
+		session.setAttribute("avancementTotal", avanceTot);
     	request.setAttribute("nomphase", user.getPhaseEnCoursBean());
     	request.setAttribute("avancementTotal", user.getAvancementTotalBean());
     	request.setAttribute("avancement", user.getAvancementPhaseBean());

@@ -97,7 +97,7 @@
 	</form>
 </div>
 
-<p><a href="http://localhost:8080/GetReady/Menu"><button class="bn28">OK</button></a></p>
+<p><a href="http://www.alexandre-piquelin.fr/GetReady/Menu"><button class="bn28">OK</button></a></p>
 
 
 </body>
