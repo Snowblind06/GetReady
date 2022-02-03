@@ -60,7 +60,6 @@ public class AffichageAvancementPhase extends HttpServlet {
 		
 		//ON CHARGE LA REQUETE AVEC LES INFOS DU USERBEAN NECESSAIRES A L'AFFICHAGE--------------------------------------------------------
 		request.setAttribute("nomphase", user.getPhaseEnCoursBean());
-    	request.setAttribute("avancementTotal", user.getAvancementTotalBean());
     	request.setAttribute("avancement", user.getAvancementPhaseBean());
 		request.setAttribute("avancementTotal", user.getAvancementTotalBean());
     	System.out.println("---------timeCalculator GETTERS---------PHASE: "+timeCalculator.getNomPhaseEnCours()+"----------AVANCEMENT: "+timeCalculator.getAvancementPhase());

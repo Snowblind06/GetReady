@@ -22,7 +22,7 @@ public class AvancementTotal implements Runnable {
 @Override
 public void run() {
 	
-	heureLimite();
+	
 	
 	while(running) {
 	
@@ -31,19 +31,20 @@ public void run() {
 			if(running && avancementTotal <100) {
 			
 				int currentTime = LocalTime.now().toSecondOfDay() - startTimeActivite ;
-				avancementTotal =  (int)(currentTime*100) / heureLimite;				
+				avancementTotal =  (int)(currentTime*100) / heureLimite;	
+				System.out.println("/////////////AVANEMENT TOTAL\\\\\\\\\\\\\\"+avancementTotal+"//////////////HEURE LIMITE\\\\\\\\\\\\\\"+heureLimite);
 				}			
 			
 			else {
 				
-				Thread.currentThread().interrupt();
+				stopAvanceTotThread();
 				avancementTotal = 0;
 				return;
 				}
 						
 		}
 		
-		Thread.currentThread().interrupt();
+		stopAvanceTotThread();
 		avancementTotal = 0;
 		return;
 	}
@@ -55,10 +56,10 @@ public void run() {
 	
 }
 	
-	
+
 	
 //CALCUL DUREE TOTALE ACTIVITE
-private int heureLimite() {
+private synchronized int heureLimite() {
 	
 			
 			Bean_Phase dernierBean;
@@ -67,28 +68,30 @@ private int heureLimite() {
 				
 				dernierBean = listPhasesUser.get(listPhasesUser.size()-1);
 				heureFin = dernierBean.getFin().toSecondOfDay();
+				System.out.println("/////////////HEURE FIN\\\\\\\\\\\\"+dernierBean.getFin());
 			}
 						
 			
 			heureLimite = heureFin - startTimeActivite;
-			
+			System.out.println("/////////////HEURE LIMITE\\\\\\\\\\\\"+heureLimite);
 
 		return heureLimite;	
 	}
 
-public void startAvanceTotThread(List<Bean_Phase>listPhasesUserBean) {
+public synchronized void startAvanceTotThread(List<Bean_Phase>listPhasesUserBean) {
 	
 	this.listPhasesUser = listPhasesUserBean;
 	running = true;
 	
 	Thread avanceThread = new Thread(this);
+	heureLimite();
 	avanceThread.start();
 	
 	System.out.println("START THREAD AVANCEMENT TOTAL:------- RUNNING:   "+running+"        NOM TABLE USER:     "+tableUser);
 	
 }
 
-public void stopAvanceTotThread() {
+public synchronized void stopAvanceTotThread() {
 	
 	running = false;
 	
@@ -98,7 +101,7 @@ public void stopAvanceTotThread() {
 
 
 
-public int getAvancementTotal() {
+public synchronized int getAvancementTotal() {
 	
 	return avancementTotal;
 }
