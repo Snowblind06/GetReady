@@ -58,11 +58,10 @@ public class Ready extends HttpServlet {
 		
 		String id = (String) session.getAttribute("id");	
 		
-		System.out.println("READY.JAVA: " + id);
 		
 		//ON CHARGE LE BEAN USER AVEC LES DONN2ES EN BASE
 		user = userAuth.afficherUserBean(id);
-		System.out.println("BEAN USER:     "+ user.getNomTableUser());
+		
 		
 		List<Bean_Phase> listPhases = tableauActivite.recupererPhase(user);
 		
@@ -78,6 +77,8 @@ public class Ready extends HttpServlet {
 		session.setAttribute("activite", listPhases);
 		session.setAttribute("timeCalculator", timeCalculator);
 		session.setAttribute("avancementTotal", avanceTot);
+		
+		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/Menu.jsp").forward(request, response);
 		}
 
@@ -97,10 +98,12 @@ public class Ready extends HttpServlet {
 		//on instancie la class Activite pour afficher le tableau sur la JSP-----------------------------------------  
 		Activite tableauActivite = new Activite();
 	
+		// ON RECUPERE LE BEAN UTILISATEUR ET LE NOM D'ACTIVITE------------------------------------------------------
 		String activiteName = (String) session.getAttribute("activiteUser");
 		
 		userbean user = (userbean) session.getAttribute("beanUser");
 		
+		//ON CHARGE LA REQUETE AVEC LA LIST DES BEAN_PHASE POUR AFFICHAGE DYNAMIQUE SUR LE JSP----------------------
 		request.setAttribute("activite", tableauActivite.recupererPhase(user));
 
 		

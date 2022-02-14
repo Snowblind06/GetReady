@@ -21,28 +21,26 @@ public class Activite {
 
 	public List<Bean_Phase> recupererPhase(userbean user) {
 		
-		//on déclare un nouvel array et les variables de requête/connexion
+		//on dï¿½clare un nouvel array et initialise les variables de requï¿½te/connexion
 		List<Bean_Phase> bean_List = new ArrayList<Bean_Phase>();
 		Statement statement = null;
 		ResultSet resultat = null;
 		
-		
+		//on importe le nom de la table de DB Ã  lire pour la prochaine requÃªte SQL
 		String nomTable = user.getNomTableUser();
-		System.out.println("ACTIVITE.JAVA -- TABLE: " + nomTable);
 		
 		Connection con = Connexion.loadDatabase();
 		
-		//on parcours la base de données et on stocke les entrées dans la variable resultat
+		//on parcours la base de donnï¿½es et on stocke les entrï¿½es dans la variable resultat
 		try {
 			
 			statement = con.createStatement();
 			String commandSQL = "SELECT indice, nomphase, debutphase, finphase, dureephase FROM `"+nomTable+"` ;";
 			
-			System.out.println("ACTIVITE.JAVA---RECUPERER PHASE:   " +commandSQL);
 			
 			resultat = statement.executeQuery(commandSQL);
 			
-			//pour chaque résultat on stocke les valeurs des champs de la BD et on défini les propriétés du bean créé dans la servlet avec ces mêmes valeurs
+			//pour chaque rï¿½sultat on stocke les valeurs des champs de la BD et on dï¿½fini les propriï¿½tï¿½s du bean crï¿½ï¿½ dans la servlet avec ces mï¿½mes valeurs
 			while (resultat.next()) {
 				
 				int indice = resultat.getInt("indice");
@@ -53,7 +51,7 @@ public class Activite {
 				
 				System.out.println(indice +"  "+ nomphase);
 				
-				//enregistrement des valeurs des variables/issues de la BD dans les propriétés du bean
+				//enregistrement des valeurs des variables/issues de la BD dans les propriï¿½tï¿½s du bean
 				Bean_Phase bean = new Bean_Phase();
 				bean.setLeNom(nomphase);
 				bean.setIndice(indice);
@@ -80,28 +78,12 @@ public class Activite {
 			}
 		}
 		
-		//on renvoie le tableau à la servlet qui l'a appelé: Ready.java
+		//on renvoie le tableau ï¿½ la servlet qui l'a appelï¿½: Ready.java
 		return bean_List;
 	}
 	
 	
-	
-	// charger la base de données: trouver le driver, définir l'objet connexion avec l'adresse de la BD l'id de connexion et le mdp
-//	private void loadDatabase() {
-//		
-//		 // Chargement du driver
-//        try {
-//            Class.forName("com.mysql.jdbc.Driver");
-//        } catch (ClassNotFoundException e) {
-//        }
-//        //on créée la connexion avec les identifiants/mdp
-//		try {
-//			connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/getready", "root", "Aqwel83alex87!");
-//		}catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
+
 	
 	public void testAjoutModif(userbean user, Bean_Phase bean) {
 		
@@ -109,7 +91,6 @@ public class Activite {
 		Statement statement = null;
 		ResultSet resultat = null;
 		String nomTable = user.getNomTableUser();
-		System.out.println("ACTIVITE.JAVA -- testAjoutModif -- activite:   " + nomTable);
 
 		try {
 			
@@ -118,13 +99,13 @@ public class Activite {
 			
 			resultat = statement.executeQuery("SELECT indice FROM `"+nomTable+"` ;");
 			
-			//pour chaque entrée parcourue on teste si une entrée dans la BD existe déjà à cet indice (l'indice du bean = celui donné par le user dans le form)
+			//pour chaque entrï¿½e parcourue on teste si une entrï¿½e dans la BD existe dï¿½jï¿½ ï¿½ cet indice (l'indice du bean = celui donnï¿½ par le user dans le form)
 			while (resultat.next()) {
 				
-				//on initialise la variable dans la boucle pour qu'elle change à chaque itération pour test ultérieur
+				//on initialise la variable dans la boucle pour qu'elle change ï¿½ chaque itï¿½ration pour test ultï¿½rieur
 				int indiceMod = resultat.getInt("indice");
 			
-				//si l'indice du bean/rentré par l'user dans le formulaire est déjà présent dans la base de donnée, on modifie l'entrée avec les nouvelles valeurs données par l'user= dans le bean
+				//si l'indice du bean/rentrï¿½ par l'user dans le formulaire est dï¿½jï¿½ prï¿½sent dans la base de donnï¿½e, on modifie l'entrï¿½e avec les nouvelles valeurs donnï¿½es par l'user= dans le bean
 				if(indiceMod == bean.getIndice()) {
 					modifierPhase(user, bean);
 						
@@ -149,7 +130,7 @@ public class Activite {
 		Connection con = Connexion.loadDatabase();
 		
 		try {
-			
+			//on importe dans les variables de mÃ©thode le bean reÃ§u en argument
 			int indice = bean.getIndice();
 			String nomphase = bean.getLeNom();
 			LocalTime debutphase = bean.getDebut();
@@ -157,6 +138,9 @@ public class Activite {
 			String nomTable = user.getNomTableUser();
 			
 			
+			////////////////// A SIMPLIFIER: SUPPRIMER LES VARIABLES DE LA METHODE ET UTILISER LES GETERS DANS LA REQUETE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+			
+			//on rempli la requÃªte sql avec les valeurs des variables
 			PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO `"+nomTable+"` (indice, nomPhase, debutPhase, finPhase) VALUES('"+indice+"', '"+nomphase+"', '"+debutphase+"', '"+finphase+"') ;");
 					
 
@@ -171,23 +155,24 @@ public class Activite {
 	}		
 	
 	
-	//modification d'une entrée existante, trouvée par l'indice de la BD vs indice du bean - fonction appelée par ajouterPhase()
+	//modification d'une entrï¿½e existante, trouvï¿½e par l'indice de la BD vs indice du bean - fonction appelï¿½e par ajouterPhase()
 	public void modifierPhase(userbean user, Bean_Phase bean) {
 		
 		Connection con = Connexion.loadDatabase();
 		
 		try {
-			//on initialise les variables: importation des propriétés du bean pour ensuite les  envoyer dans la requête SQL
+			//on initialise les variables: importation des propriï¿½tï¿½s du bean pour ensuite les  envoyer dans la requï¿½te SQL
 			int cle = bean.getIndice();
 			String nomphase = bean.getLeNom();
 			LocalTime debutphase = bean.getDebut();
 			LocalTime finphase = bean.getFin();
 			String nomTable = user.getNomTableUser();
 			
-			//envoi de la requête SQL à la BD incluant les variables initialisée ci-dessus
+			//envoi de la requï¿½te SQL ï¿½ la BD incluant les variables initialisï¿½e ci-dessus
 			PreparedStatement preparedStatement = con.prepareStatement("UPDATE `"+nomTable+"` SET nomphase = '"+nomphase+"', debutphase = '"+debutphase+"', finphase = '"+finphase+"'  WHERE indice= "+cle+";");
 			preparedStatement.executeUpdate();
 			
+			//CALCUL DE LA DURE DE L'ETAPE
 			calculIntervalle(user, bean);
 			
 		}catch (SQLException e) {
@@ -198,10 +183,9 @@ public class Activite {
 	
 	
 	
-	//méthode pour supprimer une entrée dans la BD: l'ordre vient de l'user dans la jsp, chaque ligne du tableau de recap du contenu de la BD a un boutton "supprimer" envoyant un indice
+	//mï¿½thode pour supprimer une entrï¿½e dans la BD: l'ordre vient de l'user dans la jsp, chaque ligne du tableau de recap du contenu de la BD a un boutton "supprimer" envoyant un indice
 	public void supprimerPhase(int indice, userbean user) {
-		
-		System.out.println("ACTIVITE.JAVA supprimerPhase PRINT activiteName:   " + user.getNomTableUser());
+
 		
 		Connection con = Connexion.loadDatabase();
 	
@@ -218,7 +202,7 @@ public class Activite {
 	}
 	
 	
-	//Calculer la durée de l'étape
+	//Calculer la durï¿½e de l'ï¿½tape ET ENREGISTREMENT EN DB
 	private void calculIntervalle(userbean user, Bean_Phase bean) {
 
 		Connection con = Connexion.loadDatabase();
@@ -227,23 +211,23 @@ public class Activite {
 				
 				PreparedStatement preparedStatement;
 				
-				//import de l'indice de la phase  en BD dont il faut calculer la durée
+				//import de l'indice de la phase  en BD dont il faut calculer la durï¿½e
 				int cle = bean.getIndice();
 				
-				//conversion des propriétés Time du bean (saisie user) en LocalTime pour calcul d'interval (Duration.between)
+				//conversion des propriï¿½tï¿½s Time du bean (saisie user) en LocalTime pour calcul d'interval (Duration.between)
 				LocalTime debutPhase = bean.getDebut();
 				LocalTime finPhase = bean.getFin();
 				String nomTable = user.getNomTableUser();
 				System.out.println("ACTIVITE.JAVA PRINT BEAN.ACTIVITE:   " + nomTable);
 				Long intervallePhase = Duration.between(debutPhase, finPhase).toMinutes();
 				
-				//Conversion en entier (compatibilité avec JProgressBar)
+				//Conversion en entier (compatibilitï¿½ avec JProgressBar)
 				int dureePhase = intervallePhase.intValue();
 				
-				//définition de la propriété du bean
+				//dï¿½finition de la propriï¿½tï¿½ du bean
 				bean.setDureephase(dureePhase);
 
-				//enregistrement de la propriété du bean (durée) en BD incluant les variables initialisée ci-dessus
+				//enregistrement de la propriï¿½tï¿½ du bean (durï¿½e) en BD incluant les variables initialisï¿½e ci-dessus
 				preparedStatement = con.prepareStatement("UPDATE `"+nomTable+"` SET dureephase = '"+dureePhase+"' WHERE indice= '"+cle+"';");
 				preparedStatement.executeUpdate();
 			

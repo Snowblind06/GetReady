@@ -9,7 +9,7 @@ public class AvancementTotal implements Runnable {
 
 	
 	//initialisation des variables
-	private final int startTimeActivite = (LocalTime.now().toSecondOfDay());
+	private int startTimeActivite ;
 	public int indice;
 	public float stopTimeLecteur ;
 	private boolean running ;
@@ -32,7 +32,7 @@ public void run() {
 			
 				int currentTime = LocalTime.now().toSecondOfDay() - startTimeActivite ;
 				avancementTotal =  (int)(currentTime*100) / heureLimite;	
-				System.out.println("/////////////AVANEMENT TOTAL\\\\\\\\\\\\\\"+avancementTotal+"//////////////HEURE LIMITE\\\\\\\\\\\\\\"+heureLimite);
+
 				}			
 			
 			else {
@@ -68,12 +68,10 @@ private synchronized int heureLimite() {
 				
 				dernierBean = listPhasesUser.get(listPhasesUser.size()-1);
 				heureFin = dernierBean.getFin().toSecondOfDay();
-				System.out.println("/////////////HEURE FIN\\\\\\\\\\\\"+dernierBean.getFin());
-			}
-						
+				System.out.println("----------DERNIER BEAN-------------"+dernierBean.getLeNom()+"-----------FIN A ---------------"+dernierBean.getFin());
+			}			
 			
 			heureLimite = heureFin - startTimeActivite;
-			System.out.println("/////////////HEURE LIMITE\\\\\\\\\\\\"+heureLimite);
 
 		return heureLimite;	
 	}
@@ -83,11 +81,12 @@ public synchronized void startAvanceTotThread(List<Bean_Phase>listPhasesUserBean
 	this.listPhasesUser = listPhasesUserBean;
 	running = true;
 	
+	startTimeActivite = (LocalTime.now().toSecondOfDay());
+	
 	Thread avanceThread = new Thread(this);
 	heureLimite();
 	avanceThread.start();
 	
-	System.out.println("START THREAD AVANCEMENT TOTAL:------- RUNNING:   "+running+"        NOM TABLE USER:     "+tableUser);
 	
 }
 
@@ -95,8 +94,7 @@ public synchronized void stopAvanceTotThread() {
 	
 	running = false;
 	
-	
-	System.out.println("STOP THREAD AVANCEMENT TOTAL:-------  RUNNING:   "+running+"        NOM TABLE USER:     "+tableUser);
+
 	}
 
 

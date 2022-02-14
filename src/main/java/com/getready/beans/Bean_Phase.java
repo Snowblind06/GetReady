@@ -12,7 +12,7 @@ public class Bean_Phase implements Serializable {
 
 	private int indice;
 	private String leNom;	
-	private LocalTime debut ; //Heure de début - voir la classe DateTime: DateTime minusMinutes(), DateTimeplusMinutes(), DateTime MinutesOfDay() etc.//
+	private LocalTime debut ; 
 	private LocalTime fin ;
 	private int dureephase;
 	private String activiteName;
